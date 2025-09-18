@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- الثيم الرئيسي للتطبيق -->
+    <style name="Theme.OverlayApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- لون الخلفية -->
+        <item name="android:windowBackground">?android:colorBackground</item>
+        <!-- يسمح للـ Overlay يظهر فوق التطبيقات -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+</resources>
