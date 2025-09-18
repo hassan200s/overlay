@@ -5,9 +5,10 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import android.widget.LinearLayout
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,51 +17,34 @@ class MainActivity : AppCompatActivity() {
 
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(40, 200, 40, 40)
-        }
-
-        val startBtn = Button(this).apply { text = "تشغيل الـ Overlay" }
-        val stopBtn = Button(this).apply { text = "إيقاف (يضبط التطبيق أيضاً)" }
-
-        layout.addView(startBtn)
-        layout.addView(stopBtn)
-        setContentView(layout)
-
-        startBtn.setOnClickListener {
-            if (!Settings.canDrawOverlays(this)) {
-                val intent = Intent(
-                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:$packageName")
-                )
-                startActivity(intent)
-            } else {
-                startOverlayService()
+            val start = Button(context).apply { text = "تشغيل الـ Overlay" }
+            val stop = Button(context).apply { text = "إيقاف" }
+            addView(start)
+            addView(stop)
+            start.setOnClickListener {
+                if (canDrawOverlays()) {
+                    startService(Intent(this@MainActivity, OverlayService::class.java))
+                } else {
+                    requestOverlayPermission()
+                }
+            }
+            stop.setOnClickListener {
+                stopService(Intent(this@MainActivity, OverlayService::class.java))
             }
         }
-
-        stopBtn.setOnClickListener {
-            stopOverlayService()
-        }
+        setContentView(layout)
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (Settings.canDrawOverlays(this)) {
-            startOverlayService()
-        }
+    private fun canDrawOverlays(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Settings.canDrawOverlays(this)
+        } else true
     }
 
-    private fun startOverlayService() {
-        val intent = Intent(this, OverlayService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
-        } else {
-            startService(intent)
+    private fun requestOverlayPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
+            Toast.makeText(this, "يرجى منح إذن العرض فوق التطبيقات", Toast.LENGTH_LONG).show()
         }
-    }
-
-    private fun stopOverlayService() {
-        val intent = Intent(this, OverlayService::class.java)
-        stopService(intent)
     }
 }

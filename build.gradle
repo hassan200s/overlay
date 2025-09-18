@@ -1,32 +1,27 @@
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.android' version '1.8.22' apply false
 }
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     namespace 'com.example.overlayapp'
     compileSdk 33
-
     defaultConfig {
         applicationId "com.example.overlayapp"
-        minSdk 21
+        minSdk 23
         targetSdk 33
         versionCode 1
         versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = '11'
+    buildTypes {
+        release { minifyEnabled false }
     }
 }
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.8.20'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
 }
